@@ -14,10 +14,11 @@ fn main(){
         .expect("Should have been able to read the file");
 
     if let Ok(lines) = read_lines(file_path) {
-        for line in lines {
-            if let Ok(hands) = line {
-                println!("Opp: {} | You: {}", hands[0], hands[2]);
-            }
+        for (num, line) in lines.enumerate() {
+            for hand in line.expect("Panic").split_whitespace() {
+                println!("round{}: hand {}",num, hand);
+            } 
+            //println!("Line: {} | Sign: {:?}", num, line.expect("Panic 2").to_uppercase());
         }
     }
 
