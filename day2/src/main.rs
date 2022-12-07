@@ -1,30 +1,42 @@
-use std::io;
-use std::cmp::Ordering;
-use rand::Rng;
+use std::env;
+use std::io::{self, BufRead};
+use std::fs;
+use std::path::Path;
 
+fn main(){
 
-fn main() {
-    println!("Guess a number!");
+    let args: Vec<String> = env::args().collect();
+    let file_path = &args[1];
 
-    let secret_number = rand::thread_rng().gen_range(1..=100);
-    
-    println!("The secret number is: {secret_number}");
+    println!("ROCK PAPER SCISSORS! Input read from {}", file_path);
 
-    println!("Please input your guess.");
+    let contents = fs::read_to_string(file_path)
+        .expect("Should have been able to read the file");
 
-    let mut guess = String::new();
-
-    io::stdin()
-        .read_line(&mut guess)
-        .expect("Failed to read line"); 
-
-    let guess: u32 = guess.trim().parse().expect("Please type a number");
-    println!("You guessed: {guess}");
-
-    match guess.cmp(& secret_number) {
-        Ordering::Less => println!("Too small!"),
-        Ordering::Greater => println!("Too big!"),
-        Ordering::Equal => println!("You win!"),
+    if let Ok(lines) = read_lines(file_path) {
+        for line in lines {
+            if let Ok(hands) = line {
+                println!("Opp: {} | You: {}", hands[0], hands[2]);
+            }
+        }
     }
+
+    let mut inputs: Vec<char> = contents.chars().collect();
+    
+    if let Some(hand_opponent) = inputs.pop() {
+        println!("Opponent hand: {}", hand_opponent);
+    }
+
+    if let Some(hand_myself) = inputs.pop() {
+        println!("My hand: {}", hand_myself);
+    }
+
+    //println!("Inputs: \n{}", inputs.pop());
 }
+
+fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<fs::File>>> where P: AsRef<Path>, {
+    let file = fs::File::open(filename)?;
+    Ok(io::BufReader::new(file).lines())
+}
+
 
