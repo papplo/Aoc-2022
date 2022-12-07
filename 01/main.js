@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-// 1st of december, count calories according to input series
+// 2nd of december, count calories according to input series, return the sum of three top most elves
 const input = fs.readFileSync('./input.txt', {encoding: 'utf8', flag: 'r'});
 
 const sanitizeInput = input.split(/\r?\n/);
@@ -20,10 +20,13 @@ for (let i = 0; i < sanitizeInput.length; i++) {
 	}
 }
 
-const sortByCalories = groupItemsByIndex.sort(function(a, b){
-	return b.caloriesSum - a.caloriesSum
-})
+const sortDescending = groupItemsByIndex.sort((a,b) => b.caloriesSum - a.caloriesSum);
 
-console.log('end');
-console.log(sortByCalories[0]);
+const returnTopThree = [...sortDescending.slice(0,3)].reduce((prev, curr) => 
+		prev + curr.caloriesSum
+	, 0);
+
+console.log('Top Elf: ', sortDescending[0]);
+console.log('end, sum of Top three elves', returnTopThree);
+
 
